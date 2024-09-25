@@ -25,3 +25,17 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+
+.dart_tool/
+.idea/
+.vscode/
+.DS_Store
+build/
+ios/Flutter/Flutter.framework
+ios/Pods/
+android/.gradle/
+android/.idea/
+pubspec.lock
+.packages
+.flutter-plugins

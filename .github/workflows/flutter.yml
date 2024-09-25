@@ -1,0 +1,76 @@
+name: Flutter CI
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out the repository
+    - uses: actions/checkout@v2
+    
+    # Install Flutter environment
+    - name: Install Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: 'stable'
+    
+    # Install Flutter dependencies
+    - name: Install dependencies
+      run: flutter pub get
+    
+    # Run tests
+    - name: Run tests
+      run: flutter test
+
+    # Build the APK (Optional for Android)
+    - name: Build APK
+      run: flutter build apk --release
+
+    # Build the iOS app (Optional for iOS)
+    # This requires a macOS runner for iOS builds
+    # Uncomment this section if you need iOS builds
+    #- name: Build iOS
+    #  runs-on: macos-latest
+    #  run: flutter build ios --release
+
+
+
+    - name: Install Fastlane
+      run: sudo gem install fastlane -NV
+
+    - name: Deploy to Google Play
+      run: bundle exec fastlane android deploy
+      env:
+        SUPPLY_JSON_KEY: ${{ secrets.SUPPLY_JSON_KEY }}
+
+    - name: Deploy to TestFlight
+      run: bundle exec fastlane ios deploy
+      env:
+        APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+    - name: Deploy to Google Play
+      run: |
+        bundle install
+        fastlane android deploy
+      env:
+        SUPPLY_JSON_KEY: ${{ secrets.SUPPLY_JSON_KEY }}
+        SUPPLY_PACKAGE_NAME: "com.yourcompany.yourapp"
+
+    - name: Deploy to App Store
+      run: |
+        bundle install
+        fastlane ios deploy
+      env:
+        APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+      
