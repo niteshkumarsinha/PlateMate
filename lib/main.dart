@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  void main() {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => CartModel(),
+        child: MyApp(),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
